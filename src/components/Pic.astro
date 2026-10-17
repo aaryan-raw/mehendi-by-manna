@@ -1,0 +1,10 @@
+---
+import m from '../data/images.json';
+const { k, alt, sizes = '100vw', eager = false, cls = '' } = Astro.props;
+const b = import.meta.env.BASE_URL.replace(/\/$/, '');
+const { w, W, H } = m[k];
+const srcset = w.map((x) => `${b}/img/${k}-${x}.webp ${x}w`).join(', ');
+const src = `${b}/img/${k}-${w[Math.min(1, w.length - 1)]}.webp`;
+---
+<img class={cls} src={src} srcset={srcset} sizes={sizes} alt={alt} width={W} height={H}
+  loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : undefined} />

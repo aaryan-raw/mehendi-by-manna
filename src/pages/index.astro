@@ -1,0 +1,240 @@
+---
+import '../styles/global.css';
+import Pic from '../components/Pic.astro';
+import Booking from '../components/Booking.jsx';
+import m from '../data/images.json';
+// Preload only the three font files used above the fold, so the swap from fallback fonts happens before first paint (avoids layout shift).
+import jostLatin from '@fontsource-variable/jost/files/jost-latin-wght-normal.woff2?url';
+import cormMedium from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2?url';
+import cormItalic from '@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff2?url';
+const IG = 'https://www.instagram.com/mehndi_by_manna_/';
+const b = import.meta.env.BASE_URL.replace(/\/$/, '');
+const full = (k) => `${b}/img/${k}-${m[k].w[m[k].w.length - 1]}.webp`;
+const ALT = {
+  p1: 'Open palm with a dense floral and spiral henna design, photographed in warm light beside a brass lantern and baby’s-breath flowers.',
+  p2: 'Open palm with a small henna lotus at its centre and banded designs on each fingertip, with soft leaf shadows behind.',
+  p3: 'Deeply stained henna on a palm and forearm, with a half-mandala cuff, lattice panels and detailed fingers, resting on beige cloth.',
+  p4: 'Both forearms raised, covered in layered henna bands and florals, with fresh paste still on the palms and fingertips.',
+  p5: 'Two henna-covered forearms raised against a cream curtain, showing bands of floral and leaf patterns.',
+  shot: 'Hand and forearm with Arabic-style henna, bold florals and Greek-key borders, in a sunlit room beside a houseplant.',
+};
+// Social image needs an absolute URL. Build with SITE_URL set once a real domain exists; until then no og:image/og:url is emitted.
+const site = Astro.site;
+const ogImage = site ? new URL(`${b}/img/og.jpg`, site).href : null;
+const gallery = ['p3', 'p1', 'p4', 'p2', 'shot'];
+const nav = [['About', '#about'], ['Collection', '#work'], ['Services', '#services'], ['Pricing', '#pricing'], ['FAQ', '#faq'], ['Contact', '#contact']];
+const faq = [
+  ['How do I enquire about a booking?', 'Send a direct message on Instagram at @mehndi_by_manna_. The profile says to DM for bookings.', false],
+  ['What types of henna are offered?', 'The profile lists Bridal Henna and non-bridal henna services.', false],
+  ['Where is the artist available?', 'The profile lists Trivandrum and Kochi. Exactly how that works (where the artist is based, and where travel is possible) has not been confirmed.', true],
+  ['How much does it cost?', 'No prices are published on this website, and the artist’s pricing has not been confirmed. Please ask by DM.', true],
+  ['Is there a travel policy or a deposit?', 'These details are still to be confirmed with the artist.', true],
+  ['What is the cancellation policy?', 'To be confirmed with the artist.', true],
+  ['How long does an appointment take?', 'Appointment length has not been confirmed. Please ask by DM.', true],
+  ['Is my date available?', 'Real availability is not shown on this website. The booking demo uses sample dates only, so please ask by DM.', true],
+];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mehndi by Manna · Bridal &amp; Non-Bridal Henna (concept demonstration)</title>
+  <meta name="description" content="An independent concept demonstration of how Mehndi by Manna’s henna work could look online. Not an official website." />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="theme-color" content="#FAF6F0" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Mehndi by Manna · concept demonstration" />
+  <meta property="og:description" content="A private website concept for Mehndi by Manna. Independent demonstration, not an official website." />
+  {ogImage && <meta property="og:image" content={ogImage} />}
+  {ogImage && <meta property="og:url" content={new URL(`${b}/`, site).href} />}
+  <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+  {[jostLatin, cormMedium, cormItalic].map((f) => <link rel="preload" as="font" type="font/woff2" href={f} crossorigin />)}
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23EADFD2' stroke='%23C8AE95' stroke-width='3'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-style='italic' font-size='34' fill='%238A5A34'%3EM%3C/text%3E%3C/svg%3E" />
+  <link rel="preload" as="image" href={`${b}/img/p1-800.webp`} imagesrcset={m.p1.w.map((x) => `${b}/img/p1-${x}.webp ${x}w`).join(', ')} imagesizes="(min-width:760px) 40vw, 440px" />
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Mehndi by Manna, back to top"><img src={`${b}/img/logo.png`} width={m.logo.W} height={m.logo.H} alt="Mehndi by Manna logo" /></a>
+    <nav aria-label="Primary"><ul class="links">{nav.map(([t, h]) => <li><a href={h}>{t}</a></li>)}</ul></nav>
+    <div class="nav-r">
+      <a class="btn" href="#booking">Booking demo</a>
+      <button class="burger" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span></span></button>
+    </div>
+  </div>
+  <nav class="menu" id="menu" data-open="false" aria-label="Mobile">{nav.map(([t, h]) => <a href={h}>{t}</a>)}<a href="#booking">Booking demo</a></nav>
+</header>
+
+<main id="main">
+<section class="hero" aria-labelledby="h-hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Mehndi by Manna</p>
+      <h1 id="h-hero">A little art. <em style="display:block">A lasting impression.</em></h1>
+      <p class="lead">Bridal and non-bridal henna, with designs that are affordable and customisable to you.</p>
+      <div class="row">
+        <a class="btn" href="#work">Explore the collection</a>
+        <a class="btn btn--ghost" href="#booking">Try the booking demo</a>
+      </div>
+      <small>Or say hello on Instagram: <a class="link" href={IG} target="_blank" rel="noopener noreferrer">@mehndi_by_manna_<span class="sr"> (opens in a new tab)</span></a></small>
+    </div>
+    <div class="hero-img arch-wrap rv"><div class="frame arch"><Pic k="p1" alt={ALT.p1} eager sizes="(min-width:760px) 40vw, 440px" /></div></div>
+  </div>
+</section>
+
+<div class="strip"><ul aria-label="At a glance"><li>Bridal Henna · Non-Bridal Henna</li><li>Trivandrum · Kochi</li><li>Customisable Designs</li></ul><p class="strip-note">As listed on the Instagram profile</p></div>
+
+<section class="sec about" id="about" aria-labelledby="h-about">
+  <div class="wrap">
+    <div class="arch-wrap rv"><div class="frame arch"><Pic k="p5" alt={ALT.p5} sizes="(min-width:900px) 420px, 90vw" /></div></div>
+    <div class="rv">
+      <p class="eyebrow">The artist behind Mehndi by Manna</p>
+      <h2 id="h-about">Fine lines, <em>natural warmth.</em></h2>
+      <p class="lead">Mehndi by Manna creates henna for brides and for other occasions, from richly layered sleeves to quiet, minimal motifs.</p>
+      <p>The Instagram profile describes the designs as affordable and customisable. Browse the collection to get a feel for the style, then reach out on Instagram to talk about what you have in mind.</p>
+      <ul class="facts">
+        <li><b>Bridal Henna</b><span>Listed on the Instagram profile.</span></li>
+        <li><b>Non-Bridal Henna</b><span>Listed on the Instagram profile.</span></li>
+        <li><b>Customisable Designs</b><span>As described on the Instagram profile.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="work" aria-labelledby="h-work" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv"><p class="eyebrow">The collection</p><h2 id="h-work">Henna, <em>up close.</em></h2><p class="lead">Select any photograph to look closer at the detail.</p></div>
+    <div class="masonry">
+      {gallery.map((k, i) => (
+        <button class="tile rv" data-lb data-full={full(k)} data-alt={ALT[k]} aria-label={`Open larger view: ${ALT[k]}`}>
+          <span class="frame"><Pic k={k} alt="" sizes="(min-width:760px) 33vw, 50vw" /></span><span class="zoom" aria-hidden="true">+</span>
+        </button>
+      ))}
+      <a class="ig-tile rv" href={IG} target="_blank" rel="noopener noreferrer"><span>More work on Instagram</span> <strong>@mehndi_by_manna_</strong> <span>Opens in a new tab <span aria-hidden="true">↗</span></span></a>
+    </div>
+    <p class="note">The photographs carry the @mehndi_by_manna_ watermark.</p>
+  </div>
+</section>
+
+<section class="sec services" id="services" aria-labelledby="h-serv">
+  <div class="wrap">
+    <div class="head rv"><p class="eyebrow">Services</p><h2 id="h-serv">Two kinds of <em>henna.</em></h2><p class="lead">As listed on the Instagram profile.</p></div>
+    <div class="cards">
+      <article class="card rv">
+        <div class="frame"><Pic k="p4" alt={ALT.p4} sizes="(min-width:760px) 45vw, 92vw" /></div>
+        <div class="card-b"><span class="tag">Service</span><h3>Bridal Henna</h3>
+          <p>Henna for brides. Message on Instagram to talk through designs, timing and details.</p>
+          <div class="row"><a class="btn" href="#booking" data-service="bridal">Try the booking demo</a><a class="btn btn--ghost" href="#pricing">Enquire</a></div></div>
+      </article>
+      <article class="card rv">
+        <div class="frame"><Pic k="p2" alt={ALT.p2} sizes="(min-width:760px) 45vw, 92vw" /></div>
+        <div class="card-b"><span class="tag">Service</span><h3>Non-Bridal Henna</h3>
+          <p>Henna for non-bridal occasions. Message on Instagram to talk through designs, timing and details.</p>
+          <div class="row"><a class="btn" href="#booking" data-service="nonbridal">Try the booking demo</a><a class="btn btn--ghost" href="#pricing">Enquire</a></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec dark pricing" id="pricing" aria-labelledby="h-price">
+  <div class="wrap">
+    <div class="rv"><p class="eyebrow">Pricing &amp; enquiries</p><h2 class="big" id="h-price">Ask about pricing.</h2>
+      <p class="lead">No prices are published on this website. To ask about pricing or a customised quote, send a direct message on Instagram.</p>
+      <div class="row"><a class="btn" href={IG} target="_blank" rel="noopener noreferrer">Message on Instagram<span aria-hidden="true"> ↗</span><span class="sr"> (opens in a new tab)</span></a><a class="btn btn--ghost" href="#faq">Read the FAQ</a></div></div>
+    <ol class="steps-l rv" aria-label="How to enquire">
+      <li><div><h3>Open Instagram</h3><p>Find @mehndi_by_manna_, where the profile invites DMs for bookings.</p></div></li>
+      <li><div><h3>Say what you have in mind</h3><p>Mention the occasion and the kind of design you like, and ask about pricing or a customised quote.</p></div></li>
+      <li><div><h3>Confirm the details</h3><p>Dates, travel and policies are to be confirmed with the artist directly.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec booking" id="booking" aria-labelledby="h-book">
+  <div class="wrap">
+    <div class="head rv"><p class="eyebrow">Booking Demo</p><h2 id="h-book">See how booking <em>could feel.</em></h2><p class="lead">A fully simulated preview. It sends nothing and books nothing.</p></div>
+    <Booking client:visible />
+  </div>
+</section>
+
+<section class="sec" id="faq" aria-labelledby="h-faq" style="padding-top:0">
+  <div class="faq">
+    <div class="head rv"><p class="eyebrow">FAQ</p><h2 id="h-faq">Good <em>questions.</em></h2></div>
+    {faq.map(([q, a, tbc]) => <details><summary>{q}</summary><div>{tbc && <span class="tbc">To be confirmed</span>}{a}</div></details>)}
+  </div>
+</section>
+
+<section class="sec contact" id="contact" aria-labelledby="h-contact">
+  <div class="wrap">
+    <div class="rv">
+      <img class="logo" src={`${b}/img/logo.png`} width={m.logo.W} height={m.logo.H} alt="" loading="lazy" />
+      <p class="eyebrow">Get in touch</p><h2 id="h-contact">Let’s talk <em>henna.</em></h2>
+      <p class="lead">The Instagram profile invites DMs for bookings, so a direct message to @mehndi_by_manna_ is the place to start.</p>
+      <div class="row"><a class="btn" href={IG} target="_blank" rel="noopener noreferrer">Message on Instagram<span aria-hidden="true"> ↗</span><span class="sr"> (opens in a new tab)</span></a></div>
+    </div>
+    <div class="arch-wrap rv"><div class="frame arch"><Pic k="p3" alt={ALT.p3} sizes="(min-width:900px) 360px, 80vw" /></div></div>
+  </div>
+</section>
+</main>
+
+<footer class="dark">
+  <div class="wrap">
+    <div class="f-g">
+      <div><h2>Mehndi by Manna</h2><p>Bridal &amp; non-bridal henna.<br />Trivandrum · Kochi (as listed on the Instagram profile)</p></div>
+      <div><h3>Explore</h3><ul>{nav.map(([t, h]) => <li><a href={h}>{t}</a></li>)}<li><a href="#booking">Booking demo</a></li></ul></div>
+      <div><h3>Instagram</h3><ul><li><a href={IG} target="_blank" rel="noopener noreferrer">@mehndi_by_manna_<span aria-hidden="true"> ↗</span><span class="sr"> (opens in a new tab)</span></a></li></ul></div>
+    </div>
+    <div class="legal"><span>Independent concept demonstration · Not an official website</span><span>Photographs carry the @mehndi_by_manna_ watermark and are shown for demonstration only.</span></div>
+  </div>
+</footer>
+
+<dialog id="lb" aria-label="Image viewer">
+  <div class="lb-in">
+    <figure class="lb-fig"><img id="lb-img" alt="" /></figure>
+    <p class="lb-cap" id="lb-cap"></p>
+  </div>
+  <span id="lb-c" aria-live="polite"></span>
+  <button class="lb-b" id="lb-x" aria-label="Close image viewer">✕</button>
+  <button class="lb-b" id="lb-p" aria-label="Previous image">‹</button>
+  <button class="lb-b" id="lb-n" aria-label="Next image">›</button>
+</dialog>
+
+<script>
+const d = document, $ = (s, r = d) => r.querySelector(s), $$ = (s, r = d) => [...r.querySelectorAll(s)];
+d.documentElement.classList.add('js');
+d.addEventListener('error', (e) => { const t = e.target; if (t && t.tagName === 'IMG') t.closest('.frame')?.classList.add('broken'); }, true);
+const nav = $('#nav'), btn = $('#menu-btn'), menu = $('#menu');
+const sc = () => nav.classList.toggle('scrolled', scrollY > 20); sc(); addEventListener('scroll', sc, { passive: true });
+const setMenu = (o) => { menu.dataset.open = String(o); btn.setAttribute('aria-expanded', String(o)); btn.setAttribute('aria-label', o ? 'Close menu' : 'Open menu'); };
+btn.addEventListener('click', () => setMenu(menu.dataset.open !== 'true'));
+$$('a', menu).forEach((a) => a.addEventListener('click', () => setMenu(false)));
+d.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.dataset.open === 'true') { setMenu(false); btn.focus(); } });
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.1 });
+$$('.rv').forEach((el) => io.observe(el));
+$$('[data-service]').forEach((a) => a.addEventListener('click', () => { (window as any).__demoService = (a as HTMLElement).dataset.service; window.dispatchEvent(new CustomEvent('demo-service', { detail: (a as HTMLElement).dataset.service })); }));
+// lightbox
+const dlg = $('#lb') as HTMLDialogElement, img = $('#lb-img') as HTMLImageElement, cap = $('#lb-cap')!, cnt = $('#lb-c')!;
+const items = $$('[data-lb]') as HTMLElement[]; let cur = 0;
+const show = (i: number) => { cur = (i + items.length) % items.length; const t = items[cur]; img.src = t.dataset.full!; img.alt = t.dataset.alt!; cap.textContent = t.dataset.alt!; cnt.textContent = `${cur + 1} / ${items.length}`; };
+items.forEach((t, i) => t.addEventListener('click', () => { show(i); dlg.showModal(); }));
+$('#lb-x')!.addEventListener('click', () => dlg.close());
+$('#lb-p')!.addEventListener('click', () => show(cur - 1));
+$('#lb-n')!.addEventListener('click', () => show(cur + 1));
+dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+const foc = ['#lb-x', '#lb-p', '#lb-n'].map((s) => $(s) as HTMLElement);
+d.addEventListener('keydown', (e) => {
+  if (!dlg.open) return;
+  if (e.key === 'ArrowLeft') show(cur - 1);
+  else if (e.key === 'ArrowRight') show(cur + 1);
+  else if (e.key === 'Tab') {
+    const a = d.activeElement;
+    if (e.shiftKey && (a === foc[0] || !dlg.contains(a))) { e.preventDefault(); foc[2].focus(); }
+    else if (!e.shiftKey && (a === foc[2] || !dlg.contains(a))) { e.preventDefault(); foc[0].focus(); }
+  }
+});
+let x0 = 0; dlg.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+dlg.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1)); });
+</script>
+</body>
+</html>
